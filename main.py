@@ -6,11 +6,9 @@ import cv2
 
 
 def main(path):
-    # Carga el clasificador Haar para la detección de rostros
     face_cascade = cv2.CascadeClassifier("./Models/haarcascade_frontalface_default.xml")
 
-    # Inicializar la cámara (puedes cambiar el valor a 0 si deseas usar la cámara web)
-    cap = cv2.VideoCapture(0)  # Cambia 'tu_video.mp4' por el nombre de tu archivo de video o 0 para la cámara web
+    cap = cv2.VideoCapture(0)
     width = int(cap.get(3))
     height = int(cap.get(4))
     size = (width, height)
@@ -18,21 +16,17 @@ def main(path):
     result = cv2.VideoWriter(path, codec, 30, size)
 
     while True:
-        # Leer el siguiente fotograma del video
         ret, frame = cap.read()
 
         if not ret:
             break
 
-        # Convertir el fotograma a escala de grises (la detección de rostros funciona mejor en imágenes en escala de grises)
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         imgBlur = cv2.GaussianBlur(gray, (13, 13), 0)
         imgThreshold = cv2.adaptiveThreshold(imgBlur, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 191, 2)
 
-        # Detectar rostros en la imagen
         faces = face_cascade.detectMultiScale(imgThreshold, scaleFactor=1.1, minNeighbors=5, minSize=(100, 100))
 
-        # Dibujar un rectángulo alrededor de los rostros detectados
         for (x, y, w, h) in faces:
             cv2.rectangle(frame, (x, y), (x + w, y + h), (255, 0, 0), 2)
 
